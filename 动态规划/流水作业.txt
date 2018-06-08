@@ -1,0 +1,102 @@
+//思想还是跟简单的，万事开头难，主要是工作类的构造和排序要想想怎么实现而已
+#include <iostream>
+#include <algorithm>
+#include <string.h>
+using namespace std;
+class Jobtype
+{
+public:
+	int time;     // 执行时间
+	int index;    // 作业序号
+	bool group;   // 作业所属组，一共两个机器，1为第一组，0为第二组
+
+	int operator <= (Jobtype a) const // 重载<=号
+	{
+		return (time <= a.time);
+	}
+
+};
+
+bool compare(Jobtype a, Jobtype b)      // sort使用
+{
+	return a.time<b.time;                 //升序排列，如果改为return a>b，则为降序
+}
+
+// 按照Johnson法则执行流水作业调度
+/*
+流水作业调度问题的Johnson算法：
+
+1. 令M={i|Mi<Ni},N={i|Mi>=Ni}
+
+2. 将M中任务以Mi非递减排序，将N中作业依Ni非递增排序
+
+3. M中任务接N中任务即为Johnson法则的最优调度
+
+*/
+int FlowShop(int n, int a[], int b[], int c[])
+{
+	Jobtype * d = new Jobtype[n];
+
+	// 得到n个作业中，每个作业的最小加工时间
+
+	for (int i = 0; i < n; i++)
+	{
+		d[i].time = a[i] > b[i] ? b[i] : a[i];       // 
+		d[i].group = a[i] <= b[i];                   // 前面两个是对应的，true那组就是上面看a,另外一组就只看b的
+		d[i].index = i;                              // 作业序号
+	}
+
+	sort(d, d + n, compare);    // 真是方便，可以了解下参数
+	int j = 0, k = n - 1;
+	for (int i = 0; i < n; i++)
+	{
+		if (d[i].group)        // 如果是第一组，则从0开始放入c[]，c[]是最优调度序列
+		{
+			c[j++] = d[i].index;
+		}
+		else                    //真是写的好，这个思想记一记，前后夹攻放进来
+		{
+			c[k--] = d[i].index;
+		}
+	}
+
+	j = a[c[0]];                // 计算最优调度序列下的消耗总时间
+	k = j + b[c[0]];             //k就是第一个作业两次加工的时间
+	for (int i = 1; i < n; i++)
+	{
+		j += a[c[i]];           //如果第一个作业两次加工的时间大于前两个作业第一次加工的时间，那么明显就是大者加上最后一次加工的时间。反正亦然。
+		k = j < k ? k + b[c[i]] : j + b[c[i]];  // 这个也是很好理解的，画个图一看就明白了，看下书本笔记图
+	}
+	delete d;
+	return k;
+}
+int main()
+{
+	//int a[] = { 2, 5, 9, 12 };            // 第一台机器的加工时间
+	//int b[] = { 7, 3, 10, 13 };           // 第二台机器的加工时间
+	//int n = sizeof(a) / sizeof(int);    // 作业数
+	cout << "输入作业数" << endl;
+	int n;
+	cin >> n;
+	int *a = new int[n], *b=new int[n];
+	cout << "分别输入作业在机器1工作时间" << endl;
+	for (int i = 0; i < n; i++)         // 输出最优调度序列
+	{
+		cin >> a[i] ;
+	}
+	cout << "分别输入作业在机器2工作时间" << endl;
+	for (int i = 0; i < n; i++)         // 输出最优调度序列
+	{
+		cin >> b[i] ;
+	}
+	int* c = new int[n];                // 最优调度序列
+	int Result = FlowShop(n, a, b, c);  // 最优调度时间的总数
+	cout << Result << endl;
+	for (int i = 0; i < n; i++)         // 输出最优调度序列
+	{
+		cout << c[i] << " ";
+	}
+	cout << endl;
+	return 0;
+}
+

@@ -1,0 +1,61 @@
+#include<iostream>
+using namespace std;
+
+#define maxsize 10
+typedef struct{
+	int a[2];
+	char c[5];
+}elemtype;
+typedef struct{
+elemtype *elem;
+int size;
+}sqlist;
+
+void initlist(sqlist &l)
+{
+	l.elem=new elemtype[maxsize];
+	
+	if(l.elem) l.size=0;
+
+}
+
+void creatlist(sqlist &l,int m)
+{
+
+	
+	for(int i=0;i<m;i++)
+	{
+		for(int j=0;i<2;j++)
+	{
+	cin>>l.elem[i].a[j];
+}
+
+	cin>>l.elem[i].c;
+	
+		l.size++;
+	}
+}
+
+void show(sqlist &l)
+{
+	for(int i=0;i<l.size;i++)
+		for(int j=0;i<2;j++)
+	{
+	cout<<l.elem[i].a[j]<<endl;
+}
+	
+cout<<l.elem[i].c<<endl;
+}
+
+
+
+int main()
+{
+	sqlist L;
+	initlist(L);
+	printf("请输入元素（空格分隔）:");
+	creatlist(L,5);
+    show(L);
+
+	return 0;
+}

@@ -1,0 +1,105 @@
+#include<iostream>
+using namespace std;
+typedef int elemtype;
+typedef struct Snode
+{
+	elemtype date;
+	struct Snode *next;
+}Snode,*Linkstack;
+
+
+
+void init(Linkstack &S){
+	S=NULL;
+}
+
+void push(Linkstack &S,elemtype e){
+	Snode *p=new Snode;
+	p->date=e;
+	p->next=S;
+	S=p;
+}
+
+void pop(Linkstack &S,elemtype &e){
+	if(!S)  cout<<"没有元素"<<endl;
+	e=S->date;
+	Snode *p=S;
+	S=S->next;
+	delete p;
+}
+
+
+//链队
+
+typedef struct Qnode
+{
+	elemtype date;
+	struct Qnode *next;
+}Qnode,*Queueptr;
+
+typedef struct
+{
+	Qnode *front;
+	Qnode *rear;
+}Linkqueue;
+
+
+void initqueue(Linkqueue &Q){
+	Q.front=Q.rear=new Qnode;
+	Q.front->next=NULL;
+}
+
+
+void en(Linkqueue &Q,elemtype e){
+	Qnode *p=new Qnode;
+	p->date=e;
+	p->next=NULL;
+	Q.rear->next=p;
+	Q.rear=p;
+
+}
+
+void de(Linkqueue &Q,elemtype &e){
+	if(!Q.front->next) cout<<"没有元素了"<<endl;
+	Qnode *q=Q.front->next;
+	e=q->date;
+	Q.front->next=q->next;
+	//有一点很重要，当最后一个元素被删除的情况
+	if(Q.rear==q) Q.rear=Q.front;
+	delete q;
+}
+
+
+
+
+
+int main()
+{
+
+	/*
+	Linkstack S;
+	init(S);
+	push(S,6);
+	push(S,66);
+	cout<<"压进后输出"<<endl;
+	cout<<S->date<<endl;
+	elemtype x=0;
+    pop(S,x);
+	cout<<"弹出后"<<endl;
+    cout<<S->date<<endl;
+	cout<<"弹出的值是"<<x<<endl;*/
+
+
+Linkqueue Q;
+initqueue(Q);
+en(Q,7);
+en(Q,77);
+cout<<Q.front->next->date<<endl;
+cout<<Q.rear->date<<endl;
+
+elemtype x=0;
+de(Q,x);
+cout<<Q.front->next->date<<endl;
+
+	return 0;
+}

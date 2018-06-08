@@ -1,0 +1,147 @@
+#include<iostream>
+using namespace std;
+typedef int elemtype;
+typedef struct Lnode
+{
+	elemtype date;
+	struct Lnode *next;
+}Lnode,*Linklist;
+/*
+void init(Linklist &L){
+	L=new Lnode;
+	L->next=NULL;//链表的这个函数根本就是多余的，没用！！！！
+}*/
+
+void creat(Linklist &L,int n){//如果是前插法，思想也很简单，只要创建节点的next
+	L=new Lnode;              //先取L.next的值就行，然后把自己赋给L.next
+	L->next=NULL;             //即 p->next=L.next;L.next=p;
+	Linklist r=L;
+	for(int i=0;i<n;i++){
+		Lnode *p=new Lnode;
+		cin>>p->date;
+		p->next=NULL;
+		r->next=p;
+		r=p;
+	}
+}
+
+void show(Linklist &L){
+	Lnode *p=L;
+	while(p->next!=NULL){
+	cout<<p->next->date;
+	p=p->next;}
+}
+
+
+
+void show2(Linklist &L){
+	Lnode *p=L;
+	while(p->next->next!=NULL){
+	cout<<p->next->date;
+	p=p->next;}
+}
+//专门为第一个倒序输入而改的;也可以试试while条件不变，输出变为cout<<p->date;
+
+
+
+void insert(Linklist &L,int n,elemtype e){
+	Lnode *p=L;
+	for(int i=0;i<n;i++)
+			p=p->next;
+		Lnode *s=new Lnode;
+		s->date=e;
+		s->next=p->next;
+		p->next=s;
+}
+
+void dele(Linklist &L,int n){
+	Lnode *p=L;
+
+	for(int i=0;i<n;i++)
+			p=p->next;
+	Lnode *q=p->next;
+		p->next=p->next->next;//要注意这里左边是p->next，注意，一般容易写成p
+		delete q;
+}
+
+void daoxu(Linklist &L){
+	Lnode *left=NULL;
+    Lnode *temp;
+	Lnode *right=L;
+	while(right){
+		temp=right;
+		right=right->next;
+		temp->next=left;
+        left=temp;
+	}
+	L=new Lnode;
+	L->next=left;
+	
+}
+
+		
+void yddx(Linklist &L){//原地倒序真的是强太多！！！！！
+	Linklist p,q;
+	p=L->next;
+	L->next=NULL;
+	while(p){
+		q=p;
+		p=p->next;
+
+		q->next=L->next;
+		L->next=q;
+	}
+}
+
+Linklist digui(Linklist &L){//递归+回溯才是真正的厉害！！！
+	 Linklist p;
+	if(L==NULL||L->next==NULL)  return L;
+	p=digui(L->next);
+//回溯
+	L->next->next=L;
+	L->next=NULL;
+
+return p;
+	
+}
+
+
+
+int main()
+{
+	Linklist L;
+	creat(L,3);
+ 
+	show(L);
+/*	cout<<"输入插入数据"<<endl;
+	elemtype a;
+	cin>>a;
+	insert(L,2,a);
+show(L);
+cout<<"删除后"<<endl;
+dele(L,2);
+show(L);
+*/
+
+/*daoxu(L);
+cout<<"倒序后"<<endl;
+show2(L);//专门为第一个倒序输入而改的
+
+  */
+
+	/*
+	yddx(L);
+cout<<"原地倒序后"<<endl;
+show(L);
+
+  */
+
+	/*
+	cout<<"递归倒序后"<<endl;
+	Linklist a=new Lnode;
+	a->next=digui(L);
+show2(a);
+*/
+
+	return 0;
+}

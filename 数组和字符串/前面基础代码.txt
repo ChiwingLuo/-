@@ -1,0 +1,69 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+#include<vector>
+using namespace std;
+int main()
+{
+	/*int n=3,x;
+	char **p;
+	p=new char*[n];
+	for(int i=0;i<n;i++)
+	{
+		cin>>x;
+	*(p+i)=new char[x];
+    cin>>*(p+i);
+	}
+cout<<p[2];
+*/
+	/*
+int n=3;
+	string *p=new string[n];
+	for(int i=0;i<3;i++)
+	cin>>*(p+i);
+	for(int j=0;j<3;j++)
+	cout<<*(p+j)<<endl;
+	return 0;
+}
+*/
+
+	/*
+	string str;
+	cin>>str;
+	str.append("bbbccc");
+
+*/
+
+	/*
+	for(int i=0;i<str.size();i++)
+	{	
+	cout<<str[i]<<' '<<endl;
+	}
+	*/
+	/*str+="aaa";*/
+
+/*string::iterator p = str.begin();
+	for(;p!=str.end();p++)
+	cout<<*p<<endl;*/
+
+	/*
+	vector<int> v;
+    for (int i = 0; i < 10; i++){
+            v.push_back(i);
+    }
+		vector<int>::iterator p=v.begin();
+for(;p!=v.end();p++)
+	cout<<*p<<endl;*/
+
+
+	/*
+vector<string> v;
+v.insert(v.begin(),"aaa");
+		vector<string>::iterator p = v.begin();
+	for(;p!=v.end();p++)
+	cout<<*p<<endl;
+*/
+
+
+	return 0;
+}

@@ -1,0 +1,192 @@
+#include<iostream>
+using namespace std;
+const int MAX_DATA=10000;//堆的可容纳的最大元素，当做首位的哨兵用
+const int MIN_DATA = -10000;//堆的可容纳的最小元素，当做首位的哨兵用
+enum Type{ Maximum, Minimum };//分别代表最大最小堆
+class Heap
+{
+private:
+    int *data;      //存放堆中元素
+    int size;       //堆的目前大小
+    int capacity;//堆的最大容量
+    Type type;  //堆的具体类型
+public:
+    Heap()
+    {
+        int c, t;
+        cout << "堆的最大容量为";
+        cin >> c;
+        cout << "堆的类型为(1为最大堆，0为最小堆):";
+        cin >> t;
+        size = c;//初始化是没有元素
+        capacity = MAX_DATA;//设置容量为最大
+        if (t) type = Maximum;//设置堆的类型
+        else type = Minimum;
+
+        data = new int[capacity + 1];//动态申请内存
+        if (type==Maximum) data[0] = MAX_DATA;//最大堆的0位置处放最大元素
+        else data[0] = MIN_DATA;//最大堆的0位置处放最小元素
+
+        //最大堆的元素输入按照从大到小
+        //最小堆的元素输入按照从小到大
+        for (int i = 1; i <= c; i++)
+            cin >> data[i]; 
+    };
+    ~Heap()
+    {
+        delete[]data;
+    };  
+
+    //判断堆是否满
+    int isFull()
+    {
+        if (size == capacity)
+            return 1;
+        else
+            return 0;
+    }
+
+    //判断堆是否空
+    int isEmpty()
+    {
+        if (size == 0)
+            return 1;
+        else
+            return 0;
+    }
+
+    //最大堆的插入
+    void insertMaxHeap()
+    {
+        int i,item;
+        cout << "输入插入的元素";
+        cin >> item;
+        if (isFull())
+        {
+            cout << "堆已满" << endl;
+            return;
+        }
+        i = size + 1; size++;//先指向数组的末尾，size增加1是因为插入时增加了一个元素    
+        for (; data[i/2] < item; i /= 2)//找到第一个比item大的元素时结束
+        {
+            data[i] = data[i/2];//若没有找到，则将上一层的元素挪到下一层
+        }
+        data[i] = item;//找到插入点，插入item
+    }
+
+    //最小堆的插入
+    void insertMinHeap()
+    {
+        int i, item;
+        cout << "输入插入的元素";
+        cin >> item;
+        if (isFull())
+        {
+            cout << "堆已满" << endl;
+            return;
+        }
+        i = size + 1; size++;
+        for (; data[i/2] > item; i /= 2)//找到第一个比item小的元素时结束
+        {
+            data[i] = data[i / 2];//没有找到则将上一层元素挪到下一层
+        }
+        data[i] = item;//找到插入点，插入item
+    }
+
+    //最大堆的删除
+    int deleteMaxHeap()
+    {
+        //原理如下：记录并删除最大元素，然后自顶向下上浮其较大的子节点
+        //上浮完毕后进入向下进入一层，最后将最小的元素补位上浮
+        if (isEmpty())
+        {
+            size = 0;
+            return MAX_DATA;//为空返回不可能的值
+        }
+
+        int child=1, parent=1;//指向父节点和子节点的游标
+        int max = data[1];//记录最大值用于返回
+        int last = data[size--];//记录末尾最小值，并且size减1
+
+        for (parent = 1; parent * 2 <= size; parent = child)//循环上浮子节点
+        {
+            child = parent * 2;//child指向其子节点
+            if (child!=size)//有时只有一个子节点，这里要防止越界
+            if (data[child] < data[child + 1])//child指向的是较大的子节点
+                child++;
+
+            if (last<data[parent])//找到了min的插入点就代表上浮完毕，结束循环并插入
+            if (last>data[child])
+                break;
+            else
+                data[parent] = data[child];//没有找到就继续上浮
+        }
+        data[parent] = last;//将末尾的最小值补位上浮
+        return max;
+    }
+
+    //最小堆的删除
+    int deleteMinHeap()
+    {
+        //原理如下：记录并删除最小元素，然后自顶向下上浮其较小的子节点
+        //上浮完毕后进入向下进入一层，最后将最大的元素补位上浮
+        if (isEmpty())
+        {
+            size = 0;
+            return MIN_DATA;//为空返回不可能的值
+        }
+        int child=1, parent=1;//指向父节点和子节点的游标
+        int min = data[1];//记录最小值用于返回
+        int last= data[size--];//记录末尾最后一个值
+
+        for (parent=1; parent*2 <= size; parent = child)//循环上浮子节点
+        {
+            child = parent * 2;//child指向其子节点
+            if (child!=size)
+            if (data[child] > data[child + 1])//child指向的是较小的子节点
+                ++child;
+
+            if (last > data[parent])//找到了last的插入点就代表上浮完毕，结束循环并插入
+            if (last < data[child])
+                    break;
+            else
+                data[parent] = data[child];//没有找到就继续上浮
+        }
+        data[child] = last;//将末尾的最大值补位上浮
+        return min;
+    }
+
+    //堆的查看
+    void show()
+    {
+        int change = 1,tota1 = 0;
+        for (int i = 1; i <= size; i++)
+        {
+            if (change == i)
+            {
+                cout << endl;
+                change *= 2;
+            }
+            cout << data[i] << ' ';
+            tota1++;
+        }
+        cout << endl;
+    }
+};
+
+int main()
+{
+    //主函数是测试代码
+    Heap heap;
+    heap.show();
+
+    //heap.insertMaxHeap();
+    heap.insertMinHeap();
+    heap.show();
+
+    //int i = heap.deleteMaxHeap();
+    int i = heap.deleteMinHeap();
+    heap.show();
+
+    return 0;
+}

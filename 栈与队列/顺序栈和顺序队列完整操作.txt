@@ -1,0 +1,88 @@
+#include<iostream>
+using namespace std;
+#define maxsize 10 
+typedef int elemtype;
+/*
+typedef struct 
+{
+	elemtype *top;
+    elemtype *base;
+	
+}stack;
+
+void init(stack &S){
+	S.top=S.base=new elemtype[maxsize];
+
+}
+
+void push(stack &S,elemtype e){
+	if(S.top-S.base==maxsize) cout<<"栈已满"<<endl;
+	*S.top++=e;
+
+}
+
+
+void pop(stack &S,elemtype &e){
+	if(S.top==S.base) cout<<"栈已满"<<endl;
+	e=*--S.top;
+}*/
+
+
+
+
+
+
+typedef struct{
+	elemtype *base;
+	int front;
+	int rear;
+}Queue;
+
+void initqueue(Queue &Q){
+	Q.base=new elemtype[maxsize];
+	Q.front=Q.rear=0;
+}
+
+void en(Queue &Q,elemtype e){
+	if((Q.rear+1)%maxsize==Q.front) cout<<"error"<<endl;
+	Q.base[Q.rear]=e;          //这里注意下这个顺序队列的结构，rear是下标！！！！！
+	Q.rear=(Q.rear+1)%maxsize;// 这里就是我之前是的rear前进一位，因为这里的rear相当于栈的top的地位！！
+}
+
+void de(Queue &Q,elemtype &e){
+	if(Q.rear==Q.front) cout<<"error"<<endl;
+	e=Q.base[Q.front];
+	Q.front=(Q.front+1)%maxsize;
+}
+
+
+
+
+
+
+
+int main()
+{/*
+	stack S;
+	init(S);
+	push(S,9);
+	push(S,99);
+cout<<"输出"<<*S.base<<"再输出"<<*(S.base+1)<<endl;
+elemtype e=0;
+pop(S,e);
+cout<<"输出"<<e<<"再输出"<<*S.base<<endl;
+*/
+
+
+Queue Q;
+	initqueue(Q);
+	en(Q,3);
+	en(Q,4);
+	en(Q,5);
+cout<<"输出"<<Q.base[Q.rear-1]<<"再输出"<<Q.base[Q.front]<<endl;
+elemtype e=0;
+de(Q,e);
+cout<<"输出"<<e<<"再输出"<<Q.base[Q.rear-1]<<"再输出"<<Q.base[Q.front]<<endl;
+
+	return 0;
+}

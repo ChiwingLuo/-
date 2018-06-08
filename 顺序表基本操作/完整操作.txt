@@ -1,0 +1,88 @@
+#include<iostream>
+using namespace std;
+
+#define maxsize 10
+typedef int elemtype;
+typedef struct{
+elemtype *elem;
+int size;
+}sqlist;
+
+void initlist(sqlist &l)
+{
+	l.elem=new elemtype[maxsize];
+	
+	if(l.elem) l.size=0;
+
+}
+
+void creatlist(sqlist &l,int m)
+{
+	
+	for(int i=0;i<m;i++)
+	{
+	cin>>l.elem[i];
+		l.size++;
+	}
+}
+
+void show(sqlist &l)
+{
+	for(int i=0;i<l.size;i++)	
+cout<<l.elem[i]<<endl;
+}
+
+void insert(sqlist &l,int n,elemtype e){
+    if((n<1)||(n>l.size)) cout<<"error";
+	if(l.size==maxsize) cout<<"error";
+	for(int i=l.size;i>=n-1;i--)
+		l.elem[i+1]=l.elem[i];
+	l.elem[i+1]=e;
+	++l.size;
+}
+
+void dele(sqlist &l,int n){
+	if((n<1)||(n>l.size)) cout<<"error";
+	for(int i=n;i<=l.size-1;i++){
+l.elem[i-1]=l.elem[i];
+	}
+--l.size;
+}
+
+void daoxu(sqlist &l){
+	elemtype e;
+	for(int i=0;i<=l.size/2;i++){
+		e=l.elem[i];
+		l.elem[i]=l.elem[l.size-i-1];
+		l.elem[l.size-i-1]=e;
+	}
+}
+
+
+
+int main()
+{
+	sqlist L;
+	initlist(L);
+	printf("请输入元素（空格分隔）:");
+	creatlist(L,5);
+	cout<<"输出元素："<<endl;
+    show(L);
+	//cout<<L.elem[L.size-1];
+/*	cout<<"现在输入一个插入元素";
+	elemtype e;
+	cin>>e;
+	insert(L,4,e);
+	show(L);
+	cout<<"现在删一个元素，输入位置";
+	int d;
+	cin>>d;
+	dele(L,d);
+	show(L);*/
+	cout<<"现在倒序输出";
+	daoxu(L);
+	show(L);
+
+
+	return 0;
+}

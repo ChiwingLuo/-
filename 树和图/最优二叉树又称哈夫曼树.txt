@@ -1,0 +1,157 @@
+#include<iostream>
+using namespace std;
+int cost = 0;
+const int MAX_CAPACITY = 100000;//森林的最大容纳量
+enum type{ Maxiumn，Miniumn };//代表森林的类型是从大到小还是从小到大
+
+typedef struct Node//树的节点的结构
+{
+	int weight;             //定义权重
+	Node* Leftchild;        //定义左子树
+	Node* Rightchild;   //定义右子树
+};
+
+Node flag;//森林的第一个哨兵节点
+
+typedef  struct Huffmantree//哈夫曼树森林结构
+{
+	int size;                           //森林的当前大小
+	Node *tree[MAX_CAPACITY];               //森林的最大容量
+};
+
+Huffmantree Trees;//哈夫曼树的森林
+
+void insertMax(Node* insertNode)//从大到小排列的森林的插入（最大堆的插入）
+{
+	int pos = ++Trees.size;//用临时变量指向末尾，且整体容量加一;
+	for (; Trees.tree[pos / 2]->weight < insertNode->weight; pos /= 2)//每次与对应的父节点进行比较，寻找插入位置
+	{
+		Trees.tree[pos] = Trees.tree[pos / 2];//不符合插入条件就下沉对应的父节点
+	}
+	Trees.tree[pos] = insertNode;//找到插入位置后插入
+}
+
+void insertMin(Node* insertNode)//从小到大排列的森林的插入（最小堆的插入）
+{
+	int pos = ++Trees.size;//用临时变量指向末尾，且整体容量加一;
+	for (; Trees.tree[pos / 2]->weight>insertNode->weight; pos /= 2)
+	{
+		Trees.tree[pos] = Trees.tree[pos / 2];//不符合插入条件就下沉对应的父节点
+	}
+	Trees.tree[pos] = insertNode;//找到插入位置后插入
+}
+
+Node* deleteMax()//从大到小排列的森林的删除（最大堆的删除）
+{
+	int parent = 1, child = 1;//用于指向父节点和子节点的游标
+	Node* maxNode = Trees.tree[1];//用于保存删除的最大节点
+	Node* lastNode = Trees.tree[Trees.size];//用于保存最后一个节点
+	--Trees.size;//数量减一
+
+	for (parent = 1; parent * 2 <= Trees.size; parent = child)
+	{
+		child = parent * 2;
+		if (child != Trees.size)//防止越界
+		if (Trees.tree[child]->weight < Trees.tree[child + 1]->weight)//选中较大的子节点
+			++child;
+
+		//每次都需要判断子节点是否还有子节点，没有的话就上浮保存最后一个节点用于补位
+		//if (lastNode->weight <= Trees.tree[parent]->weight)        这句是废话，显然的，第一次是肯定的不用比，后面的话既然下一句作为儿子比过了，那这里为什么还要作为父亲再比一次？多余了
+		if (lastNode->weight>Trees.tree[child]->weight)//此时较大者的儿子比不过最后一个值，循环结束  
+			break;
+		else
+			Trees.tree[parent] = Trees.tree[child];//上浮较大的节点
+	}
+	Trees.tree[parent] = lastNode;
+	return maxNode;
+}
+
+Node* deleteMin()//从小到大排列的森林的删除 （最小堆的删除）
+{
+	int parent = 1, child = 1;//用于指向父节点和子节点的游标
+	Node* minNode = Trees.tree[1];//用于保存删除的最小节点
+	Node* lastNode = Trees.tree[Trees.size];//用于保存最后一个节点
+	--Trees.size;//数量减一
+
+	for (parent = 1; parent * 2 <= Trees.size; parent = child)
+	{
+		child = parent * 2;
+		if (child != Trees.size)//防止越界
+		if (Trees.tree[child]->weight > Trees.tree[child + 1]->weight)//选中较小的子节点
+			++child;
+		
+		if (lastNode->weight >= Trees.tree[parent]->weight)//这句是废话，显然的，第一次是肯定的不用比，后面的话既然下一句作为儿子比过了，那这里为什么还要作为父亲再比一次？多余了
+		if (lastNode->weight<Trees.tree[child]->weight)
+			break;
+		else
+			Trees.tree[parent] = Trees.tree[child];//上浮较小的节点
+	}
+	Trees.tree[parent] = lastNode;
+	return minNode;
+}
+
+int isFull()//判断森林是否已满
+{
+	if (Trees.size == MAX_CAPACITY)
+		return 1;
+	else
+		return 0;
+}
+
+int isEmpty()//判断森林是否已空
+{
+	if (Trees.size == 0)
+		return 1;
+	else
+		return 0;
+}
+
+Node* CreateTree_a()//创建树
+{
+	while (Trees.size != 1)//直到只剩下一棵树
+	{
+		Node* one = deleteMin();//每次删除两棵树合并为一棵新的树
+		Node* two = deleteMin();
+		Node* newNode = new Node();
+		newNode->weight = one->weight + two->weight;
+		newNode->Leftchild = one;
+		newNode->Rightchild = two;
+		insertMin(newNode);
+	}
+	return Trees.tree[1];
+}
+
+void preTraversal(Node* root)
+{
+	cout << root->weight << ' ';
+	if (root->Leftchild != NULL)
+		preTraversal(root->Leftchild);
+	if (root->Rightchild != NULL)
+		preTraversal(root->Rightchild);
+}
+int main()
+{
+	//主函数部分是测试用代码，可以无视
+	int N;
+	Node *flag = new Node();
+	Node *hufftree = NULL;
+	flag->weight = -1000;
+	flag->Leftchild = NULL;
+	flag->Rightchild = NULL;
+	Trees.size = 0;
+	Trees.tree[0] = flag;
+	cout << "输入个数"<< endl;
+	cin >> N;
+	cout << "输入每个权" << endl;
+	for (int i = 0; i < N; i++)
+	{
+		Node* newnode = new Node();
+		cin >> newnode->weight;
+		newnode->Leftchild = NULL;
+		newnode->Rightchild = NULL;
+		insertMin(newnode);//插入小根堆
+		//insertMax(newnode);
+	}
+	preTraversal(CreateTree_a());
+	return 0;
+}

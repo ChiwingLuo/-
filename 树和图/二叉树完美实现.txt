@@ -1,0 +1,70 @@
+#include<iostream>
+using namespace std;
+
+typedef char elemtype;
+
+typedef struct btnode{
+	elemtype date;
+	btnode *left,*right;
+}btnode,*btree;
+
+
+void trav(btree t){
+	if(t){
+		trav(t->left);
+		cout<<t->date;
+		trav(t->right);
+	}
+}
+
+
+ void creat(btree &t){
+	elemtype ch;
+	cin>>ch;
+	if('#'==ch) t=NULL;
+	else {
+		t=new btnode;
+		t->date=ch;
+		creat(t->left);
+		creat(t->right);
+	}
+}
+
+
+ 
+ void copy(btree &t,btree &newt){
+	if(t==NULL) newt=NULL;
+	else {
+		newt=new btnode;
+		newt->date=t->date;
+		copy(t->left,newt->left);
+		copy(t->right,newt->right);
+	}
+}
+
+ int depth(btree t){
+	 if(t==NULL) return 0;
+	 int m=depth(t->left);
+	 int n=depth(t->right);
+	 return m>n?m+1:n+1;
+ }
+
+ int nodecount(btree t){
+	 if(t==NULL) return 0;
+	 return nodecount(t->left)+nodecount(t->right)+1;
+ }
+
+
+
+int main()//完美实现！！！
+{
+	btree t,newt;
+	creat(t);
+	trav(t);
+	copy(t,newt);
+	cout<<"复制树：";
+    trav(newt);
+	cout<<"树的深度："<<depth(t);
+	cout<<"树的节点数："<<nodecount(t);
+	return 0;
+}

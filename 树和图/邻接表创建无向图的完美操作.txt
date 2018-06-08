@@ -1,0 +1,224 @@
+#include<iostream>
+using namespace std;
+#define maxsize 100
+typedef int elemtype;
+bool visited[maxsize];
+bool visited2[maxsize];
+
+
+
+
+//****************************************************************
+typedef struct Qnode
+{
+	elemtype date;
+	struct Qnode *next;
+}Qnode,*Queueptr;
+
+typedef struct
+{
+	Qnode *front;
+	Qnode *rear;
+}Linkqueue;
+
+
+void initqueue(Linkqueue &Q){
+	Q.front=Q.rear=new Qnode;
+	Q.front->next=NULL;
+}
+
+
+void en(Linkqueue &Q,elemtype e){
+	Qnode *p=new Qnode;
+	p->date=e;
+	p->next=NULL;
+	Q.rear->next=p;
+	Q.rear=p;
+
+}
+
+void de(Linkqueue &Q,elemtype &e){
+	if(!Q.front->next) cout<<"没有元素了"<<endl;
+	Qnode *q=Q.front->next;
+	e=q->date;
+	Q.front->next=q->next;
+	//有一点很重要，当最后一个元素被删除的情况
+	if(Q.rear==q) Q.rear=Q.front;
+	delete q;
+}
+
+
+//*****************************************************************
+
+
+
+typedef struct arcnode{
+	int adj;
+	struct arcnode *next;
+}arcnode;
+
+typedef struct vnode{
+	elemtype date;
+	arcnode *first;
+}vnode,adjlist[maxsize];
+
+typedef struct algraph{
+	adjlist vertice;
+	int vexnum,arcnum;
+}algraph;
+
+
+int locate(algraph G,int v){
+	for(int y=0;y<G.vexnum;y++)
+	{
+		if(G.vertice[y].date==v) 
+			return y;
+	}
+	return -1;
+}
+
+
+void creat(algraph &G){
+	cout<<"输入点个数和边个数";
+	cin>>G.vexnum>>G.arcnum;
+	for(int z=0;z<G.vexnum;z++)
+	{	
+		cout<<"输入各个点";
+		cin>>G.vertice[z].date;
+	    G.vertice[z].first=NULL;
+	}
+	for(int k=0;k<G.arcnum;k++)
+	{
+		cout<<"分别输入各个边的两个端点";
+		int v1,v2;
+		cin>>v1>>v2;
+		int i=0,j=0;
+	i=locate(G,v1);
+	j=locate(G,v2);
+	//虚惊一场，locate没有问题，前面不要乱复制，细节错了
+//	i=v1-1;
+//	j=v2-1;
+//	cout<<"分别输入i,j";
+//		cin>>i>>j;
+
+
+		arcnode *p=new arcnode;
+		p->adj=j;
+		//前插
+//		p->next=G.vertice[i].first;
+//		G.vertice[i].first=p;
+
+
+
+		//后插法666啊
+p->next=NULL;
+arcnode *m;
+
+if(G.vertice[i].first==NULL){
+	G.vertice[i].first=p;}
+else{
+	m=G.vertice[i].first;
+	while(m->next){
+		m=m->next;}
+	m->next=p;
+}
+
+
+
+
+
+		//记录第二遍
+		arcnode *q=new arcnode;
+		q->adj=i;
+		//前插
+	//	q->next=G.vertice[j].first;
+	//	G.vertice[j].first=q;
+
+
+
+		//后插法666啊
+q->next=NULL;
+arcnode *n;
+
+if(G.vertice[j].first==NULL){
+	G.vertice[j].first=q;}
+else{
+	n=G.vertice[j].first;
+	while(n->next){
+		n=n->next;}
+	n->next=p;
+}
+
+
+
+	}
+}
+
+
+
+void dfs(algraph G,int v){
+	//原来这个代码是没问题的，在使用前插法创建时遍历的顺序和你输入的顺序有关，
+	//区别是左边深度遍历先还是右边深度遍历先
+	cout<<G.vertice[v].date<<endl;
+	visited[v]=true;
+	arcnode *p=G.vertice[v].first;
+	while(p){
+		int w=p->adj;
+		if(!visited[w]) dfs(G,w);
+		p=p->next;
+	}
+}
+
+//有点强的啊！！！广度优先，完美实现
+void bfs(algraph G,int v){
+	cout<<G.vertice[v].date<<endl;
+	visited2[v]=true;
+    Linkqueue Q;
+    initqueue(Q);
+    en(Q,v);
+    while(Q.front->next){//这里不确定
+	     elemtype u;
+		 de(Q,u);
+         arcnode *p=G.vertice[u].first;
+         while(p){
+	          if(!visited2[p->adj]){
+		      visited2[p->adj]=1;
+		      cout<<G.vertice[p->adj].date<<endl;
+		      en(Q,p->adj);
+			  }
+	         p=p->next;
+		 }
+
+	}
+}
+
+
+
+int main(){
+	algraph G;
+	creat(G);
+
+
+
+
+	for(int f=0;f<G.vexnum;f++)//这里是按邻接表顺序输出，good
+	{
+
+		cout<<G.vertice[f].date;
+		arcnode *q=G.vertice[f].first;
+		while(q){
+		cout<<q->adj;
+		q=q->next;
+		}
+		cout<<endl;
+	}
+
+
+
+	cout<<"深度遍历"<<endl;
+	dfs(G,0);
+cout<<"广度遍历"<<endl;
+	bfs(G,0);
+
+	return 0;
+}
